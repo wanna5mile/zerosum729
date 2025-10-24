@@ -6,49 +6,154 @@
     <title>Zerosum729</title>
     <link rel="stylesheet" href="loadingscreen.css" />
     <link rel="stylesheet" href="style.css" />
+    <style>
+      /* ==== Title Screen Layout ==== */
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #111;
+        color: #eee;
+        overflow: hidden;
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin: 1rem 0;
+      }
+
+      header,
+      footer {
+        text-align: center;
+      }
+
+      /* Title Screen */
+      #titleScreen {
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 8%;
+        flex-direction: column;
+      }
+
+      .menu {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .menu button,
+      .menu a {
+        background: #222;
+        border: 2px solid #444;
+        color: #eee;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        text-decoration: none;
+      }
+
+      .menu button:hover,
+      .menu a:hover {
+        background: #333;
+        transform: translateX(4px);
+      }
+
+      /* Mode selection overlay */
+      #modeSelect {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      #modeSelect button {
+        background: #222;
+        border: 2px solid #555;
+        color: #eee;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      #modeSelect button:hover {
+        background: #333;
+        transform: scale(1.05);
+      }
+
+      /* Hide the game until start */
+      #gameArea {
+        display: none;
+      }
+
+      footer {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+      }
+    </style>
   </head>
 
   <body>
-    <h1>Zerosum729</h1>
+    <!-- ===== Title Screen / Lobby ===== -->
+    <div id="titleScreen">
+      <h1>Zerosum729</h1>
+      <div class="menu">
+        <button id="playBtn">Play</button>
+        <a href="system/pages/settings.html">Settings</a>
+        <a href="https://example.com/more-games" target="_blank">More Games</a>
+      </div>
+    </div>
 
-    <header>
-      <a href="system/pages/settings.html">Settings</a>
-    </header>
+    <!-- ===== Mode Select Overlay ===== -->
+    <div id="modeSelect">
+      <button id="npcMode">Play vs Computer</button>
+      <button id="pvpMode">Play vs Player</button>
+    </div>
 
-    <main>
+    <!-- ===== Game Area (hidden until mode chosen) ===== -->
+    <main id="gameArea">
       <div id="board" class="board">
-        <!-- Big grid (3x3) -->
-        <!-- Each big cell contains a medium grid -->
-        <!-- Each medium cell contains a small grid -->
-        <div class="big-grid">
-          <!-- Generate 9 big squares -->
-          <div class="big-cell">
-            <div class="medium-grid">
-              <!-- 9 middle squares -->
-              <div class="medium-cell">
-                <div class="small-grid">
-                  <!-- 9 small squares -->
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                  <div class="small-cell"></div>
-                </div>
-              </div>
-              <!-- repeat 8 more medium-cells -->
-            </div>
-          </div>
-          <!-- repeat 8 more big-cells -->
-        </div>
+        <!-- Board gets generated dynamically later -->
       </div>
     </main>
 
     <footer>
       <a href="system/pages/version-log.html">Version: 0.0.1</a>
     </footer>
+
+    <script>
+      const playBtn = document.getElementById("playBtn");
+      const modeSelect = document.getElementById("modeSelect");
+      const titleScreen = document.getElementById("titleScreen");
+      const gameArea = document.getElementById("gameArea");
+
+      // Show mode selection
+      playBtn.addEventListener("click", () => {
+        modeSelect.style.display = "flex";
+      });
+
+      // Start game for either mode
+      document.getElementById("npcMode").addEventListener("click", () => startGame("npc"));
+      document.getElementById("pvpMode").addEventListener("click", () => startGame("pvp"));
+
+      function startGame(mode) {
+        console.log("Starting game mode:", mode);
+        titleScreen.style.display = "none";
+        modeSelect.style.display = "none";
+        gameArea.style.display = "block";
+        // You can initialize your 9×9×9 board here later
+      }
+    </script>
   </body>
 </html>
