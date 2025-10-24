@@ -1,396 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zerosum729</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zerosum729 Fractal</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-    <!-- ===== CSS ===== -->
-    <link rel="stylesheet" href="loadingscreen.css" />
-    <link rel="stylesheet" href="style.css" />
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      width: 90vmin;
+      height: 90vmin;
+      border: 2px solid #666;
+    }
 
-    <style>
-      /* ==== Layout & Theme ==== */
-      body {
-        margin: 0;
-        font-family: "Segoe UI", sans-serif;
-        background: #111;
-        color: #eee;
-        overflow: hidden;
-      }
+    .cell {
+      border: 1px solid #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      position: relative;
+    }
 
-      h1 {
-        font-size: 3rem;
-        margin: 1rem 0;
-      }
+    /* Make nested boards fill perfectly */
+    .cell > .board {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" class="board"></div>
 
-      header,
-      footer {
-        text-align: center;
-      }
+  <script>
+    // Recursive function to generate nested tic-tac-toe boards
+    function createBoard(level, maxLevel) {
+      const board = document.createElement("div");
+      board.className = "board";
 
-      /* ==== Title Screen ==== */
-      #titleScreen {
-        display: flex;
-        height: 100vh;
-        align-items: center;
-        justify-content: flex-start;
-        padding-left: 8%;
-        flex-direction: column;
-        transition: opacity 0.8s ease;
-      }
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
 
-      .menu {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-top: 2rem;
-      }
-
-      .menu button,
-      .menu a {
-        background: #222;
-        border: 2px solid #444;
-        color: #eee;
-        padding: 0.8rem 1.5rem;
-        font-size: 1.1rem;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        text-decoration: none;
-      }
-
-      .menu button:hover,
-      .menu a:hover {
-        background: #333;
-        transform: translateX(4px);
-      }
-
-      /* ==== Mode Select Overlay ==== */
-      #modeSelect {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.85);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      #modeSelect button {
-        background: #222;
-        border: 2px solid #555;
-        color: #eee;
-        padding: 1rem 2rem;
-        font-size: 1.2rem;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-      }
-
-      #modeSelect button:hover {
-        background: #333;
-        transform: scale(1.05);
-      }
-
-      /* ==== Game Area ==== */
-      #gameArea {
-        display: none;
-        opacity: 0;
-        transition: opacity 0.8s ease;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        gap: 1rem;
-      }
-
-      #gameArea.active {
-        opacity: 1;
-      }
-
-      #statusText {
-        font-size: 1.3rem;
-        color: #ccc;
-      }
-
-      /* ==== Ultimate Tic Tac Toe Board ==== */
-      .board {
-        display: grid;
-        grid-template-columns: repeat(3, auto);
-        gap: 8px;
-      }
-
-      .big-cell {
-        display: grid;
-        grid-template-columns: repeat(3, 50px);
-        grid-template-rows: repeat(3, 50px);
-        gap: 3px;
-        border: 2px solid #555;
-        border-radius: 8px;
-        background: #181818;
-        transition: all 0.3s ease;
-      }
-
-      .small-cell {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        font-weight: bold;
-        border: 1px solid #333;
-        background: #222;
-        color: #fff;
-        cursor: pointer;
-        user-select: none;
-        transition: background 0.2s ease;
-      }
-
-      .small-cell:hover {
-        background: #333;
-      }
-
-      .small-cell.taken {
-        cursor: default;
-        opacity: 0.85;
-      }
-
-      footer {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- ===== Loading Screen ===== -->
-    <div id="loadingScreen">
-      <div id="loadingLogo">Zerosum729</div>
-      <div id="loadingText">Initializing...</div>
-    </div>
-
-    <!-- ===== Title Screen ===== -->
-    <div id="titleScreen">
-      <h1>Zerosum729</h1>
-      <div class="menu">
-        <button id="playBtn">Play</button>
-        <a href="system/pages/settings.html">Settings</a>
-        <a href="https://example.com/more-games" target="_blank">More Games</a>
-      </div>
-    </div>
-
-    <!-- ===== Mode Select ===== -->
-    <div id="modeSelect">
-      <button id="npcMode">Play vs Computer</button>
-      <button id="pvpMode">Play vs Player</button>
-    </div>
-
-    <!-- ===== Game Area ===== -->
-    <main id="gameArea">
-      <div id="statusText">Get ready...</div>
-      <div id="board" class="board"></div>
-    </main>
-
-    <footer>
-      <a href="system/pages/version-log.html">Version: 0.0.1</a>
-    </footer>
-
-    <!-- ===== Core Game Logic ===== -->
-    <script>
-      const playBtn = document.getElementById("playBtn");
-      const modeSelect = document.getElementById("modeSelect");
-      const titleScreen = document.getElementById("titleScreen");
-      const gameArea = document.getElementById("gameArea");
-      const board = document.getElementById("board");
-      const statusText = document.getElementById("statusText");
-
-      let gameMode = null;
-      let turn = null;
-      let bigBoards = [];
-      let bigWinners = Array(9).fill(null);
-      let activeBig = null;
-
-      // ===== Loading Screen Fade-Out =====
-      window.addEventListener("load", () => {
-        const loader = document.getElementById("loadingScreen");
-        setTimeout(() => {
-          loader.classList.add("fade-out");
-          setTimeout(() => loader.remove(), 1000);
-        }, 1200);
-      });
-
-      // ===== Screen Transitions =====
-      playBtn.addEventListener("click", () => {
-        modeSelect.style.display = "flex";
-      });
-
-      document.getElementById("npcMode").addEventListener("click", () => startGame("npc"));
-      document.getElementById("pvpMode").addEventListener("click", () => startGame("pvp"));
-
-      function startGame(mode) {
-        gameMode = mode;
-        titleScreen.style.opacity = "0";
-        setTimeout(() => {
-          titleScreen.style.display = "none";
-          modeSelect.style.display = "none";
-          initBoard();
-          gameArea.style.display = "flex";
-          requestAnimationFrame(() => gameArea.classList.add("active"));
-          coinFlip();
-        }, 800);
-      }
-
-      // ===== Game Setup =====
-      function initBoard() {
-        board.innerHTML = "";
-        bigBoards = [];
-        bigWinners = Array(9).fill(null);
-
-        for (let i = 0; i < 9; i++) {
-          const bigCell = document.createElement("div");
-          bigCell.classList.add("big-cell");
-          bigCell.dataset.index = i;
-
-          const smalls = [];
-          for (let j = 0; j < 9; j++) {
-            const smallCell = document.createElement("div");
-            smallCell.classList.add("small-cell");
-            smallCell.dataset.big = i;
-            smallCell.dataset.small = j;
-            smalls.push(smallCell);
-            bigCell.appendChild(smallCell);
-          }
-
-          bigBoards.push({ element: bigCell, cells: smalls });
-          board.appendChild(bigCell);
-        }
-      }
-
-      // ===== Coin Flip =====
-      function coinFlip() {
-        const flip = Math.random() < 0.5 ? "X" : "O";
-        turn = flip;
-        statusText.textContent = `Coin flip result: ${turn} starts first! Choose a big box.`;
-
-        bigBoards.forEach((b, i) => {
-          b.element.addEventListener(
-            "click",
-            () => {
-              if (activeBig !== null) return;
-              activeBig = i;
-              activateBigBoard(i);
-              statusText.textContent = `Player ${turn} starts in box ${i + 1}`;
-            },
-            { once: true }
-          );
-        });
-      }
-
-      // ===== Activate a Big Board =====
-      function activateBigBoard(index) {
-        bigBoards.forEach((b, i) => {
-          b.element.style.opacity = i === index ? "1" : "0.4";
-          b.element.style.pointerEvents = i === index ? "auto" : "none";
-        });
-
-        const { cells } = bigBoards[index];
-        cells.forEach((cell) => {
-          if (!cell.textContent) {
-            cell.addEventListener("click", handleMove);
-          }
-        });
-      }
-
-      // ===== Handle Move =====
-      function handleMove(e) {
-        const cell = e.target;
-        const bigIndex = +cell.dataset.big;
-        const smallIndex = +cell.dataset.small;
-
-        if (cell.textContent !== "") return;
-        cell.textContent = turn;
-        cell.classList.add("taken");
-        cell.removeEventListener("click", handleMove);
-
-        if (checkSmallWin(bigIndex, turn)) {
-          bigWinners[bigIndex] = turn;
-          bigBoards[bigIndex].element.style.background = turn === "X" ? "#1a4" : "#a14";
+        if (level < maxLevel) {
+          const inner = createBoard(level + 1, maxLevel);
+          cell.appendChild(inner);
         }
 
-        if (checkBigWin(turn)) {
-          statusText.textContent = `Player ${turn} wins the entire game!`;
-          disableAll();
-          return;
-        }
-
-        if (bigWinners[smallIndex] || isFull(bigBoards[smallIndex].cells)) {
-          activeBig = null;
-          bigBoards.forEach((b) => (b.element.style.opacity = "1"));
-          statusText.textContent = `Player ${turn === "X" ? "O" : "X"}, choose any big box.`;
-
-          bigBoards.forEach((b, i) => {
-            if (!bigWinners[i] && !isFull(b.cells)) {
-              b.element.addEventListener(
-                "click",
-                () => {
-                  if (activeBig !== null) return;
-                  activeBig = i;
-                  activateBigBoard(i);
-                  statusText.textContent = `Now playing in box ${i + 1}`;
-                },
-                { once: true }
-              );
-            }
-          });
-        } else {
-          activeBig = smallIndex;
-          activateBigBoard(smallIndex);
-        }
-
-        turn = turn === "X" ? "O" : "X";
-        statusText.textContent = `Player ${turn}'s turn`;
+        board.appendChild(cell);
       }
+      return board;
+    }
 
-      // ===== Helpers =====
-      function isFull(cells) {
-        return cells.every((c) => c.textContent !== "");
-      }
-
-      function checkSmallWin(bigIndex, mark) {
-        const cells = bigBoards[bigIndex].cells.map((c) => c.textContent);
-        const wins = [
-          [0, 1, 2],
-          [3, 4, 5],
-          [6, 7, 8],
-          [0, 3, 6],
-          [1, 4, 7],
-          [2, 5, 8],
-          [0, 4, 8],
-          [2, 4, 6],
-        ];
-        return wins.some((combo) => combo.every((i) => cells[i] === mark));
-      }
-
-      function checkBigWin(mark) {
-        const wins = [
-          [0, 1, 2],
-          [3, 4, 5],
-          [6, 7, 8],
-          [0, 3, 6],
-          [1, 4, 7],
-          [2, 5, 8],
-          [0, 4, 8],
-          [2, 4, 6],
-        ];
-        return wins.some((combo) => combo.every((i) => bigWinners[i] === mark));
-      }
-
-      function disableAll() {
-        bigBoards.forEach((b) => (b.element.style.pointerEvents = "none"));
-      }
-    </script>
-  </body>
+    // Append a 3-level deep (3×3×3 = 729) structure
+    document.getElementById("root").replaceWith(createBoard(1, 3));
+  </script>
+</body>
 </html>
