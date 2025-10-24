@@ -1,20 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zerosum729</title>
-      <link rel="stylesheet" href="loadingscreen.css" />
-      <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="loadingscreen.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
     <h1>Zerosum729</h1>
+
     <header>
-        <a href="system/pages/settings.html">Settings</a>
+      <a href="system/pages/settings.html">Settings</a>
     </header>
+
     <main>
-      <!--content here-->
+      <div id="board" class="board">
+        <!-- Big grid (3x3) -->
+        <!-- Each big cell contains a medium grid -->
+        <!-- Each medium cell contains a small grid -->
+        <div class="big-grid">
+          <!-- Generate 9 big squares -->
+          <div class="big-cell">
+            <div class="medium-grid">
+              <!-- 9 middle squares -->
+              <div class="medium-cell">
+                <div class="small-grid">
+                  <!-- 9 small squares -->
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                  <div class="small-cell"></div>
+                </div>
+              </div>
+              <!-- repeat 8 more medium-cells -->
+            </div>
+          </div>
+          <!-- repeat 8 more big-cells -->
+        </div>
+      </div>
     </main>
+
     <footer>
-        <a href="system/pages/version-log.html">Version:0.0.1</a>
+      <a href="system/pages/version-log.html">Version: 0.0.1</a>
     </footer>
   </body>
 </html>
