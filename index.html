@@ -3,67 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zerosum729 Fractal</title>
+  <title>Zerosum729</title>
+  <link rel="stylesheet" href="loadingscreen.css" />
+  <link rel="stylesheet" href="style.css" />
   <style>
-    html, body {
+    body {
       margin: 0;
-      height: 100%;
-      background: #111;
+      font-family: "Segoe UI", sans-serif;
+      background: #000;
+      color: #eee;
+      overflow: hidden;
+    }
+
+    #fractalBG {
+      position: fixed;
+      inset: 0;
       display: flex;
       justify-content: center;
       align-items: center;
+      z-index: 0;
+      opacity: 0.15;
+      pointer-events: none;
     }
 
     .board {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      width: 90vmin;
-      height: 90vmin;
-      border: 2px solid #666;
+      grid-template-columns: repeat(3, auto);
+      gap: 8px;
     }
 
-    .cell {
-      border: 1px solid #333;
+    .big-cell {
+      display: grid;
+      grid-template-columns: repeat(3, 50px);
+      grid-template-rows: repeat(3, 50px);
+      gap: 3px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      background: #181818;
+      transition: all 0.3s ease;
+    }
+
+    .small-cell {
       display: flex;
-      justify-content: center;
       align-items: center;
-      box-sizing: border-box;
-      position: relative;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: bold;
+      border: 1px solid #333;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease;
     }
 
-    /* Make nested boards fill perfectly */
-    .cell > .board {
-      width: 100%;
-      height: 100%;
-    }
+    .small-cell:hover { background: #333; }
+    .small-cell.taken { cursor: default; opacity: 0.85; }
+
+    #gameArea { position: relative; z-index: 2; }
   </style>
 </head>
-<body>
-  <div id="root" class="board"></div>
 
+<body>
+  <!-- Fractal Background Layer -->
+  <div id="fractalBG"></div>
+
+  <!-- Original Game UI -->
+  <div id="titleScreen">
+    <h1>Zerosum729</h1>
+    <div class="menu">
+      <button id="playBtn">Play</button>
+      <a href="#">Settings</a>
+    </div>
+  </div>
+
+  <div id="modeSelect">
+    <button id="npcMode">Play vs Computer</button>
+    <button id="pvpMode">Play vs Player</button>
+  </div>
+
+  <main id="gameArea">
+    <div id="statusText">Get ready...</div>
+    <div id="board" class="board"></div>
+  </main>
+
+  <!-- Fractal Renderer -->
   <script>
-    // Recursive function to generate nested tic-tac-toe boards
     function createBoard(level, maxLevel) {
       const board = document.createElement("div");
       board.className = "board";
-
       for (let i = 0; i < 9; i++) {
         const cell = document.createElement("div");
         cell.className = "cell";
-
-        if (level < maxLevel) {
-          const inner = createBoard(level + 1, maxLevel);
-          cell.appendChild(inner);
-        }
-
+        if (level < maxLevel) cell.appendChild(createBoard(level + 1, maxLevel));
         board.appendChild(cell);
       }
       return board;
     }
 
-    // Append a 3-level deep (3×3×3 = 729) structure
-    document.getElementById("root").replaceWith(createBoard(1, 3));
+    document.getElementById("fractalBG").appendChild(createBoard(1, 3));
   </script>
+
+  <!-- Your main game JS (unchanged) -->
+  <script src="zerosum729.js"></script>
 </body>
 </html>
