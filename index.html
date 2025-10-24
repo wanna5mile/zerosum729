@@ -4,8 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zerosum729</title>
+
+    <!-- ===== CSS ===== -->
     <link rel="stylesheet" href="loadingscreen.css" />
     <link rel="stylesheet" href="style.css" />
+
     <style>
       /* ==== Layout & Theme ==== */
       body {
@@ -163,6 +166,12 @@
   </head>
 
   <body>
+    <!-- ===== Loading Screen ===== -->
+    <div id="loadingScreen">
+      <div id="loadingLogo">Zerosum729</div>
+      <div id="loadingText">Initializing...</div>
+    </div>
+
     <!-- ===== Title Screen ===== -->
     <div id="titleScreen">
       <h1>Zerosum729</h1>
@@ -189,7 +198,7 @@
       <a href="system/pages/version-log.html">Version: 0.0.1</a>
     </footer>
 
-    <!-- ===== Optimized Game Script ===== -->
+    <!-- ===== Core Game Logic ===== -->
     <script>
       const playBtn = document.getElementById("playBtn");
       const modeSelect = document.getElementById("modeSelect");
@@ -203,6 +212,15 @@
       let bigBoards = [];
       let bigWinners = Array(9).fill(null);
       let activeBig = null;
+
+      // ===== Loading Screen Fade-Out =====
+      window.addEventListener("load", () => {
+        const loader = document.getElementById("loadingScreen");
+        setTimeout(() => {
+          loader.classList.add("fade-out");
+          setTimeout(() => loader.remove(), 1000);
+        }, 1200);
+      });
 
       // ===== Screen Transitions =====
       playBtn.addEventListener("click", () => {
@@ -297,20 +315,17 @@
         cell.classList.add("taken");
         cell.removeEventListener("click", handleMove);
 
-        // Small board win
         if (checkSmallWin(bigIndex, turn)) {
           bigWinners[bigIndex] = turn;
           bigBoards[bigIndex].element.style.background = turn === "X" ? "#1a4" : "#a14";
         }
 
-        // Big board win
         if (checkBigWin(turn)) {
           statusText.textContent = `Player ${turn} wins the entire game!`;
           disableAll();
           return;
         }
 
-        // Next big board
         if (bigWinners[smallIndex] || isFull(bigBoards[smallIndex].cells)) {
           activeBig = null;
           bigBoards.forEach((b) => (b.element.style.opacity = "1"));
@@ -335,7 +350,6 @@
           activateBigBoard(smallIndex);
         }
 
-        // Switch turn
         turn = turn === "X" ? "O" : "X";
         statusText.textContent = `Player ${turn}'s turn`;
       }
