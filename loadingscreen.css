@@ -1,0 +1,65 @@
+/* ================================
+   Zerosum729 | Loading Screen
+   ================================ */
+
+/* Fullscreen overlay */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #111 0%, #000 80%);
+  color: #0ff;
+  font-family: "Segoe UI", monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.6s ease;
+  transition: opacity 1s ease;
+}
+
+/* Main title animation */
+#loadingLogo {
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* “Initializing…” text */
+#loadingText {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  color: #0af;
+  letter-spacing: 0.1em;
+  animation: blink 1.5s step-start infinite;
+}
+
+/* When finished */
+#loadingScreen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ================================
+   Animations
+   ================================ */
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow: 0 0 6px #0ff, 0 0 12px #0af, 0 0 24px #0ff;
+  }
+  50% {
+    text-shadow: 0 0 3px #0af, 0 0 8px #0ff, 0 0 18px #0af;
+  }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  50.1%, 100% { opacity: 0.3; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
